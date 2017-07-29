@@ -1,0 +1,9 @@
+C:\Users\ecurri3\Documents\GitHub\AutoClicker\AutoClicker\AutoClicker\bin\Debug\AutoClicker.exe.config
+C:\Users\ecurri3\Documents\GitHub\AutoClicker\AutoClicker\AutoClicker\bin\Debug\AutoClicker.exe
+C:\Users\ecurri3\Documents\GitHub\AutoClicker\AutoClicker\AutoClicker\bin\Debug\AutoClicker.pdb
+C:\Users\ecurri3\Documents\GitHub\AutoClicker\AutoClicker\AutoClicker\obj\Debug\AutoClicker.csprojResolveAssemblyReference.cache
+C:\Users\ecurri3\Documents\GitHub\AutoClicker\AutoClicker\AutoClicker\obj\Debug\AutoClicker.Properties.Resources.resources
+C:\Users\ecurri3\Documents\GitHub\AutoClicker\AutoClicker\AutoClicker\obj\Debug\AutoClicker.csproj.GenerateResource.Cache
+C:\Users\ecurri3\Documents\GitHub\AutoClicker\AutoClicker\AutoClicker\obj\Debug\AutoClicker.exe
+C:\Users\ecurri3\Documents\GitHub\AutoClicker\AutoClicker\AutoClicker\obj\Debug\AutoClicker.pdb
+C:\Users\ecurri3\Documents\GitHub\AutoClicker\AutoClicker\AutoClicker\obj\Debug\AutoClicker.autoClickerForm.resources
