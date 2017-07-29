@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
@@ -114,7 +116,9 @@ namespace AutoClicker
 
             while (true)
             {
-                int i = 0;
+                var i = 0;
+                playbackStopWatch.Restart();
+
                 while (i < clickTimes.Count)
                 {
                     if (backgroundWorker.CancellationPending)
@@ -151,6 +155,78 @@ namespace AutoClicker
         private void stopRecordingButton_Click(object sender, EventArgs e)
         {
             backgroundWorker.CancelAsync();
+        }
+
+        private void exportRecordingButton_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog savefile = new SaveFileDialog()
+            {
+                FileName = "default.txt",
+                Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*"
+        };
+
+            if (savefile.ShowDialog() == DialogResult.OK)
+            {
+                using (StreamWriter sw = new StreamWriter(savefile.FileName))
+                {
+                    sw.WriteLine("x,y,time");
+                    for (var i = 0; i < clickTimes.Count; i++) {
+                        sw.WriteLine($"{clickXCoordinates[i]},{clickYCoordinates[i]},{clickTimes[i]}");
+                    }
+                }
+            }
+        }
+
+        private void importRecordingButton_Click(object sender, EventArgs e)
+        {
+            DialogResult result = openFileDialog1.ShowDialog();
+            if (result != DialogResult.OK)
+            {
+                return;
+            }
+
+            var file = openFileDialog1.FileName;
+
+            List<ClickRecord> clicks = File.ReadAllLines(file).Skip(1).Select(v => ClickRecord.FromCsv(v)).ToList();
+            foreach(var click in clicks)
+            {
+                clickXCoordinates.Add(click.x);
+                clickYCoordinates.Add(click.y);
+                clickTimes.Add(click.time);
+
+                var temp = TimeSpan.FromMilliseconds(click.time);
+
+                var clickLogItem = new ListViewItem(click.x.ToString())
+                {
+                    SubItems =
+                    {
+                        click.y.ToString(),
+                        $"{temp.Minutes}:{temp.Seconds}:{temp.Milliseconds}"
+                    }
+                };
+
+                clickLog.Items.Add(clickLogItem);
+            }
+        }
+    }
+
+    public class ClickRecord
+    {
+        public int x;
+        public int y;
+        public long time;
+
+        public static ClickRecord FromCsv(string line)
+        {
+            string[] values = line.Split(',');
+            ClickRecord clickRecord = new ClickRecord()
+            {
+                x = Convert.ToInt32(values[0]),
+                y = Convert.ToInt32(values[1]),
+                time = Convert.ToInt64(values[2])
+            };
+
+            return clickRecord;
         }
     }
 }

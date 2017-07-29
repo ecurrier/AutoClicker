@@ -40,6 +40,10 @@
             this.timeOccurred = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.stopRecordingButton = new System.Windows.Forms.Button();
             this.resetButton = new System.Windows.Forms.Button();
+            this.exportRecordingButton = new System.Windows.Forms.Button();
+            this.importRecordingButton = new System.Windows.Forms.Button();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.SuspendLayout();
             // 
             // startButton
@@ -143,11 +147,37 @@
             this.resetButton.UseVisualStyleBackColor = true;
             this.resetButton.Click += new System.EventHandler(this.resetButton_Click);
             // 
+            // exportRecordingButton
+            // 
+            this.exportRecordingButton.Location = new System.Drawing.Point(97, 471);
+            this.exportRecordingButton.Name = "exportRecordingButton";
+            this.exportRecordingButton.Size = new System.Drawing.Size(116, 31);
+            this.exportRecordingButton.TabIndex = 11;
+            this.exportRecordingButton.Text = "Export Recording";
+            this.exportRecordingButton.UseVisualStyleBackColor = true;
+            this.exportRecordingButton.Click += new System.EventHandler(this.exportRecordingButton_Click);
+            // 
+            // importRecordingButton
+            // 
+            this.importRecordingButton.Location = new System.Drawing.Point(219, 471);
+            this.importRecordingButton.Name = "importRecordingButton";
+            this.importRecordingButton.Size = new System.Drawing.Size(116, 31);
+            this.importRecordingButton.TabIndex = 12;
+            this.importRecordingButton.Text = "Import Recording";
+            this.importRecordingButton.UseVisualStyleBackColor = true;
+            this.importRecordingButton.Click += new System.EventHandler(this.importRecordingButton_Click);
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            // 
             // autoClickerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(421, 479);
+            this.ClientSize = new System.Drawing.Size(421, 514);
+            this.Controls.Add(this.importRecordingButton);
+            this.Controls.Add(this.exportRecordingButton);
             this.Controls.Add(this.resetButton);
             this.Controls.Add(this.stopRecordingButton);
             this.Controls.Add(this.clickLog);
@@ -179,6 +209,10 @@
         private System.Windows.Forms.ColumnHeader timeOccurred;
         private System.Windows.Forms.Button stopRecordingButton;
         private System.Windows.Forms.Button resetButton;
+        private System.Windows.Forms.Button exportRecordingButton;
+        private System.Windows.Forms.Button importRecordingButton;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
     }
 }
 
