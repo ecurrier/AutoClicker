@@ -16,23 +16,24 @@ namespace AutoClicker
     {
         [DllImport("user32.dll")]
         static extern void mouse_event(int dwFlags, int dx, int dy, int dwData, int dwExtraInfo);
-
-        private const int MOUSEEVENTF_MOVE = 0x0001;
+        
         private const int MOUSEEVENTF_LEFTDOWN = 0x0002;
         private const int MOUSEEVENTF_LEFTUP = 0x0004;
 
         System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
         Stopwatch stopwatch = new Stopwatch();
-        List<int> clickXCoordinates = new List<int>();
-        List<int> clickYCoordinates = new List<int>();
-        List<long> clickTimes = new List<long>();
-        
         BackgroundWorker backgroundWorker = new BackgroundWorker();
+        List<ClickRecord> clicks = new List<ClickRecord>();
 
         public autoClickerForm()
         {
             InitializeComponent();
 
+            // Initialize timer attributes
+            timer.Interval = 10;
+            timer.Tick += new EventHandler(timerTick);
+
+            // Initalize background worker attributes
             backgroundWorker.DoWork += backgroundworker_DoWork;
             backgroundWorker.ProgressChanged += backgroundworker_ProgressChanged;
             backgroundWorker.WorkerReportsProgress = true;
@@ -41,9 +42,12 @@ namespace AutoClicker
 
         private void HookManager_MouseDown(object sender, MouseEventArgs e)
         {
-            clickXCoordinates.Add(e.X);
-            clickYCoordinates.Add(e.Y);
-            clickTimes.Add(stopwatch.ElapsedMilliseconds);
+            clicks.Add(new ClickRecord()
+            {
+                x = e.X,
+                y = e.Y,
+                time = stopwatch.ElapsedMilliseconds
+            });
 
             var clickLogItem = new ListViewItem(e.X.ToString())
             {
@@ -59,10 +63,7 @@ namespace AutoClicker
 
         private void startButton_Click(object sender, EventArgs e)
         {
-            timer.Interval = 10;
-            timer.Tick += new EventHandler(timerTick);
             timer.Start();
-            
             stopwatch.Start();
 
             // Hook MouseDown function
@@ -75,15 +76,11 @@ namespace AutoClicker
             HookManager.MouseDown -= HookManager_MouseDown;
 
             // Remove the click recorded for ending the recording
-            clickXCoordinates.RemoveAt(clickXCoordinates.Count - 1);
-            clickYCoordinates.RemoveAt(clickYCoordinates.Count - 1);
-            clickTimes.RemoveAt(clickTimes.Count - 1);
+            clicks.RemoveAt(clicks.Count - 1);
             clickLog.Items.RemoveAt(clickLog.Items.Count - 1);
 
             timer.Stop();
-
             stopwatch.Reset();
-            stopwatch.Stop();
         }
 
         private void timerTick(object sender, EventArgs e)
@@ -92,10 +89,11 @@ namespace AutoClicker
             timerText.Text = $"{elapsed.Minutes}:{elapsed.Seconds}:{elapsed.Milliseconds}";
         }
 
-        public void MouseClick(int x, int y)
+        private void mouseClick(int x, int y)
         {
             Cursor.Position = new Point(x, y);
 
+            // Momentarily sleep to allow time for game to recognize object below cursor
             Thread.Sleep(250);
 
             mouse_event(MOUSEEVENTF_LEFTDOWN, Cursor.Position.X, Cursor.Position.Y, 0, 0);
@@ -104,22 +102,19 @@ namespace AutoClicker
 
         private void replayButton_Click(object sender, EventArgs e)
         {
-            progressBar.Maximum = clickTimes.Count;
-
+            progressBar.Maximum = clicks.Count;
             backgroundWorker.RunWorkerAsync();
         }
 
         private void backgroundworker_DoWork(object sender, DoWorkEventArgs e)
         {
             var playbackStopWatch = new Stopwatch();
-            playbackStopWatch.Start();
-
             while (true)
             {
                 var i = 0;
                 playbackStopWatch.Restart();
 
-                while (i < clickTimes.Count)
+                while (i < clicks.Count)
                 {
                     if (backgroundWorker.CancellationPending)
                     {
@@ -127,12 +122,15 @@ namespace AutoClicker
                         return;
                     }
 
-                    if (clickTimes[i] <= playbackStopWatch.ElapsedMilliseconds)
+                    if (clicks[i].time <= playbackStopWatch.ElapsedMilliseconds)
                     {
+                        // Stop the stopwatch while click is performed since stopwatch continues running in the background
                         playbackStopWatch.Stop();
-                        MouseClick(clickXCoordinates[i], clickYCoordinates[i]);
+
+                        mouseClick(clicks[i].x, clicks[i].y);
                         i++;
                         backgroundWorker.ReportProgress(i);
+
                         playbackStopWatch.Start();
                     }
                 }
@@ -146,9 +144,7 @@ namespace AutoClicker
 
         private void resetButton_Click(object sender, EventArgs e)
         {
-            clickXCoordinates.Clear();
-            clickYCoordinates.Clear();
-            clickTimes.Clear();
+            clicks.Clear();
             clickLog.Items.Clear();
         }
 
@@ -163,15 +159,15 @@ namespace AutoClicker
             {
                 FileName = "default.txt",
                 Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*"
-        };
+            };
 
             if (savefile.ShowDialog() == DialogResult.OK)
             {
                 using (StreamWriter sw = new StreamWriter(savefile.FileName))
                 {
                     sw.WriteLine("x,y,time");
-                    for (var i = 0; i < clickTimes.Count; i++) {
-                        sw.WriteLine($"{clickXCoordinates[i]},{clickYCoordinates[i]},{clickTimes[i]}");
+                    for (var i = 0; i < clicks.Count; i++) {
+                        sw.WriteLine($"{clicks[i].x},{clicks[i].y},{clicks[i].time}");
                     }
                 }
             }
@@ -185,23 +181,25 @@ namespace AutoClicker
                 return;
             }
 
-            var file = openFileDialog1.FileName;
+            var fileName = openFileDialog1.FileName;
 
-            List<ClickRecord> clicks = File.ReadAllLines(file).Skip(1).Select(v => ClickRecord.FromCsv(v)).ToList();
-            foreach(var click in clicks)
+            List<ClickRecord> importedClicks = File.ReadAllLines(fileName).Skip(1).Select(v => ClickRecord.FromCsv(v)).ToList();
+            foreach(var click in importedClicks)
             {
-                clickXCoordinates.Add(click.x);
-                clickYCoordinates.Add(click.y);
-                clickTimes.Add(click.time);
+                clicks.Add(new ClickRecord()
+                {
+                    x = click.x,
+                    y = click.y,
+                    time = click.time
+                });
 
-                var temp = TimeSpan.FromMilliseconds(click.time);
-
+                var timeSpan = TimeSpan.FromMilliseconds(click.time);
                 var clickLogItem = new ListViewItem(click.x.ToString())
                 {
                     SubItems =
                     {
                         click.y.ToString(),
-                        $"{temp.Minutes}:{temp.Seconds}:{temp.Milliseconds}"
+                        $"{timeSpan.Minutes}:{timeSpan.Seconds}:{timeSpan.Milliseconds}"
                     }
                 };
 
