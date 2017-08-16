@@ -34,7 +34,7 @@
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.timerLabel = new System.Windows.Forms.Label();
             this.timerText = new System.Windows.Forms.TextBox();
-            this.clickLog = new System.Windows.Forms.ListView();
+            this.eventLog = new System.Windows.Forms.ListView();
             this.xCoordinate = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.yCoordinate = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.timeOccurred = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -99,18 +99,18 @@
             this.timerText.Size = new System.Drawing.Size(100, 20);
             this.timerText.TabIndex = 7;
             // 
-            // clickLog
+            // eventLog
             // 
-            this.clickLog.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.eventLog.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.xCoordinate,
             this.yCoordinate,
             this.timeOccurred});
-            this.clickLog.Location = new System.Drawing.Point(12, 105);
-            this.clickLog.Name = "clickLog";
-            this.clickLog.Size = new System.Drawing.Size(396, 295);
-            this.clickLog.TabIndex = 8;
-            this.clickLog.UseCompatibleStateImageBehavior = false;
-            this.clickLog.View = System.Windows.Forms.View.Details;
+            this.eventLog.Location = new System.Drawing.Point(12, 105);
+            this.eventLog.Name = "eventLog";
+            this.eventLog.Size = new System.Drawing.Size(396, 295);
+            this.eventLog.TabIndex = 8;
+            this.eventLog.UseCompatibleStateImageBehavior = false;
+            this.eventLog.View = System.Windows.Forms.View.Details;
             // 
             // xCoordinate
             // 
@@ -180,7 +180,7 @@
             this.Controls.Add(this.exportRecordingButton);
             this.Controls.Add(this.resetButton);
             this.Controls.Add(this.stopRecordingButton);
-            this.Controls.Add(this.clickLog);
+            this.Controls.Add(this.eventLog);
             this.Controls.Add(this.timerText);
             this.Controls.Add(this.timerLabel);
             this.Controls.Add(this.progressBar);
@@ -203,7 +203,7 @@
         private System.Windows.Forms.ProgressBar progressBar;
         private System.Windows.Forms.Label timerLabel;
         private System.Windows.Forms.TextBox timerText;
-        private System.Windows.Forms.ListView clickLog;
+        private System.Windows.Forms.ListView eventLog;
         private System.Windows.Forms.ColumnHeader xCoordinate;
         private System.Windows.Forms.ColumnHeader yCoordinate;
         private System.Windows.Forms.ColumnHeader timeOccurred;

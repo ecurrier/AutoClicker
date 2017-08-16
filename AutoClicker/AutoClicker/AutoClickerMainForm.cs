@@ -16,14 +16,20 @@ namespace AutoClicker
     {
         [DllImport("user32.dll")]
         static extern void mouse_event(int dwFlags, int dx, int dy, int dwData, int dwExtraInfo);
-        
+
+        [DllImport("user32.dll")]
+        static extern void keybd_event(byte bVk, byte bScan, int dwFlags, int dwExtraInfo);
+
         private const int MOUSEEVENTF_LEFTDOWN = 0x0002;
         private const int MOUSEEVENTF_LEFTUP = 0x0004;
+
+        private const int MOUSEEVENTF_RIGHTDOWN = 0x0008;
+        private const int MOUSEEVENTF_RIGHTUP = 0x0010;
 
         System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
         Stopwatch stopwatch = new Stopwatch();
         BackgroundWorker backgroundWorker = new BackgroundWorker();
-        List<ClickRecord> clicks = new List<ClickRecord>();
+        List<EventRecord> events = new List<EventRecord>();
 
         public autoClickerForm()
         {
@@ -42,14 +48,22 @@ namespace AutoClicker
 
         private void HookManager_MouseDown(object sender, MouseEventArgs e)
         {
-            clicks.Add(new ClickRecord()
+            bool leftClick = true;
+            if(e.Button == MouseButtons.Right)
             {
+                leftClick = false;
+            }
+
+            events.Add(new EventRecord()
+            {
+                eventType = 1,
                 x = e.X,
                 y = e.Y,
+                leftClick = leftClick,
                 time = stopwatch.ElapsedMilliseconds
             });
 
-            var clickLogItem = new ListViewItem(e.X.ToString())
+            var eventLogItem = new ListViewItem(e.X.ToString())
             {
                 SubItems =
                 {
@@ -58,7 +72,27 @@ namespace AutoClicker
                 }
             };
 
-            clickLog.Items.Add(clickLogItem);
+            eventLog.Items.Add(eventLogItem);
+        }
+
+        private void HookManager_KeyDown(object sender, KeyEventArgs e)
+        {
+            events.Add(new EventRecord()
+            {
+                eventType = 2,
+                keyCode = (int)e.KeyCode,
+                time = stopwatch.ElapsedMilliseconds
+            });
+
+            var eventLogItem = new ListViewItem(e.KeyCode.ToString())
+            {
+                SubItems =
+                {
+                    $"{stopwatch.Elapsed.Minutes}:{stopwatch.Elapsed.Seconds}:{stopwatch.Elapsed.Milliseconds}"
+                }
+            };
+
+            eventLog.Items.Add(eventLogItem);
         }
 
         private void startButton_Click(object sender, EventArgs e)
@@ -66,18 +100,20 @@ namespace AutoClicker
             timer.Start();
             stopwatch.Start();
 
-            // Hook MouseDown function
+            // Hook MouseDown and KeyDown functions
             HookManager.MouseDown += HookManager_MouseDown;
+            HookManager.KeyDown += HookManager_KeyDown;
         }
 
         private void endButton_Click(object sender, EventArgs e)
         {
-            // Unhook MouseDown function
+            // Unhook MouseDown and KeyDown functions
             HookManager.MouseDown -= HookManager_MouseDown;
+            HookManager.KeyDown -= HookManager_KeyDown;
 
             // Remove the click recorded for ending the recording
-            clicks.RemoveAt(clicks.Count - 1);
-            clickLog.Items.RemoveAt(clickLog.Items.Count - 1);
+            events.RemoveAt(events.Count - 1);
+            eventLog.Items.RemoveAt(eventLog.Items.Count - 1);
 
             timer.Stop();
             stopwatch.Reset();
@@ -89,20 +125,33 @@ namespace AutoClicker
             timerText.Text = $"{elapsed.Minutes}:{elapsed.Seconds}:{elapsed.Milliseconds}";
         }
 
-        private void mouseClick(int x, int y)
+        private void mouseClick(int x, int y, bool leftClick)
         {
             Cursor.Position = new Point(x, y);
 
             // Momentarily sleep to allow time for game to recognize object below cursor
             Thread.Sleep(250);
 
-            mouse_event(MOUSEEVENTF_LEFTDOWN, Cursor.Position.X, Cursor.Position.Y, 0, 0);
-            mouse_event(MOUSEEVENTF_LEFTUP, Cursor.Position.X, Cursor.Position.Y, 0, 0);
+            if (leftClick)
+            {
+                mouse_event(MOUSEEVENTF_LEFTDOWN, Cursor.Position.X, Cursor.Position.Y, 0, 0);
+                mouse_event(MOUSEEVENTF_LEFTUP, Cursor.Position.X, Cursor.Position.Y, 0, 0);
+            }
+            else
+            {
+                mouse_event(MOUSEEVENTF_RIGHTDOWN, Cursor.Position.X, Cursor.Position.Y, 0, 0);
+                mouse_event(MOUSEEVENTF_RIGHTUP, Cursor.Position.X, Cursor.Position.Y, 0, 0);
+            }
+        }
+
+        private void keyClick(int keyCode)
+        {
+            keybd_event(Convert.ToByte(keyCode), 0, 1 | 0, 0);
         }
 
         private void replayButton_Click(object sender, EventArgs e)
         {
-            progressBar.Maximum = clicks.Count;
+            progressBar.Maximum = events.Count;
             backgroundWorker.RunWorkerAsync();
         }
 
@@ -114,7 +163,7 @@ namespace AutoClicker
                 var i = 0;
                 playbackStopWatch.Restart();
 
-                while (i < clicks.Count)
+                while (i < events.Count)
                 {
                     if (backgroundWorker.CancellationPending)
                     {
@@ -122,12 +171,20 @@ namespace AutoClicker
                         return;
                     }
 
-                    if (clicks[i].time <= playbackStopWatch.ElapsedMilliseconds)
+                    if (events[i].time <= playbackStopWatch.ElapsedMilliseconds)
                     {
                         // Stop the stopwatch while click is performed since stopwatch continues running in the background
                         playbackStopWatch.Stop();
 
-                        mouseClick(clicks[i].x, clicks[i].y);
+                        if (events[i].eventType == 1)
+                        {
+                            mouseClick(events[i].x, events[i].y, events[i].leftClick);
+                        }
+                        else if(events[i].eventType == 2)
+                        {
+                            keyClick(events[i].keyCode);
+                        }
+
                         i++;
                         backgroundWorker.ReportProgress(i);
 
@@ -144,8 +201,8 @@ namespace AutoClicker
 
         private void resetButton_Click(object sender, EventArgs e)
         {
-            clicks.Clear();
-            clickLog.Items.Clear();
+            events.Clear();
+            eventLog.Items.Clear();
         }
 
         private void stopRecordingButton_Click(object sender, EventArgs e)
@@ -165,9 +222,15 @@ namespace AutoClicker
             {
                 using (StreamWriter sw = new StreamWriter(savefile.FileName))
                 {
-                    sw.WriteLine("x,y,time");
-                    for (var i = 0; i < clicks.Count; i++) {
-                        sw.WriteLine($"{clicks[i].x},{clicks[i].y},{clicks[i].time}");
+                    for (var i = 0; i < events.Count; i++) {
+                        if (events[i].eventType == 1)
+                        {
+                            sw.WriteLine($"{events[i].eventType},{events[i].x},{events[i].y},{events[i].leftClick.ToString()},{events[i].time}");
+                        }
+                        else if(events[i].eventType == 2)
+                        {
+                            sw.WriteLine($"{events[i].eventType},{events[i].keyCode},{events[i].time}");
+                        }
                     }
                 }
             }
@@ -183,48 +246,87 @@ namespace AutoClicker
 
             var fileName = openFileDialog1.FileName;
 
-            List<ClickRecord> importedClicks = File.ReadAllLines(fileName).Skip(1).Select(v => ClickRecord.FromCsv(v)).ToList();
-            foreach(var click in importedClicks)
+            List<EventRecord> importedEvents = File.ReadAllLines(fileName).Select(v => EventRecord.FromCsv(v)).ToList();
+            foreach (var _event in importedEvents)
             {
-                clicks.Add(new ClickRecord()
+                if (_event.eventType == 1)
                 {
-                    x = click.x,
-                    y = click.y,
-                    time = click.time
-                });
-
-                var timeSpan = TimeSpan.FromMilliseconds(click.time);
-                var clickLogItem = new ListViewItem(click.x.ToString())
-                {
-                    SubItems =
+                    events.Add(new EventRecord()
                     {
-                        click.y.ToString(),
-                        $"{timeSpan.Minutes}:{timeSpan.Seconds}:{timeSpan.Milliseconds}"
-                    }
-                };
+                        eventType = _event.eventType,
+                        x = _event.x,
+                        y = _event.y,
+                        leftClick = _event.leftClick,
+                        time = _event.time
+                    });
 
-                clickLog.Items.Add(clickLogItem);
+                    var timeSpan = TimeSpan.FromMilliseconds(_event.time);
+                    var eventLogItem = new ListViewItem(_event.x.ToString())
+                    {
+                        SubItems =
+                        {
+                            _event.y.ToString(),
+                            $"{timeSpan.Minutes}:{timeSpan.Seconds}:{timeSpan.Milliseconds}"
+                        }
+                    };
+
+                    eventLog.Items.Add(eventLogItem);
+                }
+                else if(_event.eventType == 2)
+                {
+                    events.Add(new EventRecord()
+                    {
+                        eventType = _event.eventType,
+                        keyCode = _event.keyCode,
+                        time = _event.time
+                    });
+
+                    var timeSpan = TimeSpan.FromMilliseconds(_event.time);
+                    var eventLogItem = new ListViewItem(_event.keyCode.ToString())
+                    {
+                        SubItems =
+                        {
+                            $"{timeSpan.Minutes}:{timeSpan.Seconds}:{timeSpan.Milliseconds}"
+                        }
+                    };
+
+                    eventLog.Items.Add(eventLogItem);
+                }
             }
         }
     }
 
-    public class ClickRecord
+    public class EventRecord
     {
+        public int eventType; // Click = 1, Key = 2
         public int x;
         public int y;
+        public int keyCode;
+        public bool leftClick;
         public long time;
 
-        public static ClickRecord FromCsv(string line)
+        public static EventRecord FromCsv(string line)
         {
             string[] values = line.Split(',');
-            ClickRecord clickRecord = new ClickRecord()
+            EventRecord eventRecord = new EventRecord()
             {
-                x = Convert.ToInt32(values[0]),
-                y = Convert.ToInt32(values[1]),
-                time = Convert.ToInt64(values[2])
+                eventType = Convert.ToInt32(values[0])
             };
 
-            return clickRecord;
+            if(eventRecord.eventType == 1)
+            {
+                eventRecord.x = Convert.ToInt32(values[1]);
+                eventRecord.y = Convert.ToInt32(values[2]);
+                eventRecord.leftClick = Convert.ToBoolean(values[3]);
+                eventRecord.time = Convert.ToInt64(values[4]);
+            }
+            else if(eventRecord.eventType == 2)
+            {
+                eventRecord.keyCode = Convert.ToInt32(values[1]);
+                eventRecord.time = Convert.ToInt32(values[2]);
+            }
+
+            return eventRecord;
         }
     }
 }
