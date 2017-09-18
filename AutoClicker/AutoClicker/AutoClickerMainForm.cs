@@ -26,6 +26,8 @@ namespace AutoClicker
         private const int MOUSEEVENTF_RIGHTDOWN = 0x0008;
         private const int MOUSEEVENTF_RIGHTUP = 0x0010;
 
+        private bool recordingActions = false;
+
         System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
         Stopwatch stopwatch = new Stopwatch();
         BackgroundWorker backgroundWorker = new BackgroundWorker();
@@ -41,15 +43,23 @@ namespace AutoClicker
 
             // Initalize background worker attributes
             backgroundWorker.DoWork += backgroundworker_DoWork;
-            backgroundWorker.ProgressChanged += backgroundworker_ProgressChanged;
             backgroundWorker.WorkerReportsProgress = true;
             backgroundWorker.WorkerSupportsCancellation = true;
+
+            // Hook MouseDown and KeyDown functions
+            HookManager.MouseDown += HookManager_MouseDown;
+            HookManager.KeyDown += HookManager_KeyDown;
         }
 
         private void HookManager_MouseDown(object sender, MouseEventArgs e)
         {
+            if (!recordingActions)
+            {
+                return;
+            }
+
             bool leftClick = true;
-            if(e.Button == MouseButtons.Right)
+            if (e.Button == MouseButtons.Right)
             {
                 leftClick = false;
             }
@@ -77,6 +87,20 @@ namespace AutoClicker
 
         private void HookManager_KeyDown(object sender, KeyEventArgs e)
         {
+            if (e.KeyCode == Keys.F1)
+            {
+                startPlayback();
+            }
+            else if (e.KeyCode == Keys.F2)
+            {
+                endPlayback();
+            }
+
+            if (!recordingActions)
+            {
+                return;
+            }
+
             events.Add(new EventRecord()
             {
                 eventType = 2,
@@ -100,16 +124,12 @@ namespace AutoClicker
             timer.Start();
             stopwatch.Start();
 
-            // Hook MouseDown and KeyDown functions
-            HookManager.MouseDown += HookManager_MouseDown;
-            HookManager.KeyDown += HookManager_KeyDown;
+            recordingActions = true;
         }
 
         private void endButton_Click(object sender, EventArgs e)
         {
-            // Unhook MouseDown and KeyDown functions
-            HookManager.MouseDown -= HookManager_MouseDown;
-            HookManager.KeyDown -= HookManager_KeyDown;
+            recordingActions = false;
 
             // Remove the click recorded for ending the recording
             events.RemoveAt(events.Count - 1);
@@ -151,13 +171,20 @@ namespace AutoClicker
 
         private void replayButton_Click(object sender, EventArgs e)
         {
-            progressBar.Maximum = events.Count;
+            startPlayback();
+        }
+
+        private void startPlayback()
+        {
+            progressBar.Maximum = (int) events.Last().time;
             backgroundWorker.RunWorkerAsync();
         }
 
         private void backgroundworker_DoWork(object sender, DoWorkEventArgs e)
         {
             var playbackStopWatch = new Stopwatch();
+            var loopTracker = 0;
+
             while (true)
             {
                 var i = 0;
@@ -165,6 +192,10 @@ namespace AutoClicker
 
                 while (i < events.Count)
                 {
+                    Invoke((MethodInvoker)delegate {
+                        UpdateProgressBar((int)playbackStopWatch.ElapsedMilliseconds);
+                    });
+
                     if (backgroundWorker.CancellationPending)
                     {
                         e.Cancel = true;
@@ -180,7 +211,7 @@ namespace AutoClicker
                         {
                             mouseClick(events[i].x, events[i].y, events[i].leftClick);
                         }
-                        else if(events[i].eventType == 2)
+                        else if (events[i].eventType == 2)
                         {
                             keyClick(events[i].keyCode);
                         }
@@ -191,12 +222,49 @@ namespace AutoClicker
                         playbackStopWatch.Start();
                     }
                 }
+
+                loopTracker++;
+                Invoke((MethodInvoker)delegate {
+                    UpdateFormTitleText(loopTracker.ToString());
+                });
+
+                if (!string.IsNullOrWhiteSpace(loopCounterText.Text))
+                {
+                    var currentLoopCount = int.Parse(loopCounterText.Text);
+                    if (currentLoopCount == 0)
+                    {
+                        backgroundWorker.CancelAsync();
+                        break;
+                    }
+
+                    currentLoopCount--;
+                    Invoke((MethodInvoker)delegate {
+                        UpdateLoopCounterTextBox(currentLoopCount.ToString());
+                    });
+                }
             }
         }
 
-        private void backgroundworker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        public void UpdateFormTitleText(string text)
         {
-            progressBar.Value = e.ProgressPercentage;
+            Invoke((MethodInvoker)delegate {
+                Text = $"Auto Clicker ({text})";
+            });
+        }
+
+        public void UpdateLoopCounterTextBox(string text)
+        {
+            Invoke((MethodInvoker)delegate {
+                loopCounterText.Text = text;
+            });
+        }
+
+        public void UpdateProgressBar(int time)
+        {
+            Invoke((MethodInvoker)delegate
+            {
+                progressBar.Value = time;
+            });
         }
 
         private void resetButton_Click(object sender, EventArgs e)
@@ -206,6 +274,11 @@ namespace AutoClicker
         }
 
         private void stopRecordingButton_Click(object sender, EventArgs e)
+        {
+            endPlayback();
+        }
+
+        private void endPlayback()
         {
             backgroundWorker.CancelAsync();
         }
@@ -222,12 +295,13 @@ namespace AutoClicker
             {
                 using (StreamWriter sw = new StreamWriter(savefile.FileName))
                 {
-                    for (var i = 0; i < events.Count; i++) {
+                    for (var i = 0; i < events.Count; i++)
+                    {
                         if (events[i].eventType == 1)
                         {
                             sw.WriteLine($"{events[i].eventType},{events[i].x},{events[i].y},{events[i].leftClick.ToString()},{events[i].time}");
                         }
-                        else if(events[i].eventType == 2)
+                        else if (events[i].eventType == 2)
                         {
                             sw.WriteLine($"{events[i].eventType},{events[i].keyCode},{events[i].time}");
                         }
@@ -272,7 +346,7 @@ namespace AutoClicker
 
                     eventLog.Items.Add(eventLogItem);
                 }
-                else if(_event.eventType == 2)
+                else if (_event.eventType == 2)
                 {
                     events.Add(new EventRecord()
                     {
@@ -313,14 +387,14 @@ namespace AutoClicker
                 eventType = Convert.ToInt32(values[0])
             };
 
-            if(eventRecord.eventType == 1)
+            if (eventRecord.eventType == 1)
             {
                 eventRecord.x = Convert.ToInt32(values[1]);
                 eventRecord.y = Convert.ToInt32(values[2]);
                 eventRecord.leftClick = Convert.ToBoolean(values[3]);
                 eventRecord.time = Convert.ToInt64(values[4]);
             }
-            else if(eventRecord.eventType == 2)
+            else if (eventRecord.eventType == 2)
             {
                 eventRecord.keyCode = Convert.ToInt32(values[1]);
                 eventRecord.time = Convert.ToInt32(values[2]);

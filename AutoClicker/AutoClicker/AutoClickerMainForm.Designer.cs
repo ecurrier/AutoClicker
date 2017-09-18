@@ -44,13 +44,16 @@
             this.importRecordingButton = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.loopCounterText = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // startButton
             // 
             this.startButton.Location = new System.Drawing.Point(12, 12);
             this.startButton.Name = "startButton";
-            this.startButton.Size = new System.Drawing.Size(201, 55);
+            this.startButton.Size = new System.Drawing.Size(115, 55);
             this.startButton.TabIndex = 0;
             this.startButton.Text = "Start Recording";
             this.startButton.UseVisualStyleBackColor = true;
@@ -58,9 +61,9 @@
             // 
             // endButton
             // 
-            this.endButton.Location = new System.Drawing.Point(219, 12);
+            this.endButton.Location = new System.Drawing.Point(135, 12);
             this.endButton.Name = "endButton";
-            this.endButton.Size = new System.Drawing.Size(189, 55);
+            this.endButton.Size = new System.Drawing.Size(115, 55);
             this.endButton.TabIndex = 1;
             this.endButton.Text = "End Recording";
             this.endButton.UseVisualStyleBackColor = true;
@@ -68,19 +71,19 @@
             // 
             // replayButton
             // 
-            this.replayButton.Location = new System.Drawing.Point(12, 417);
+            this.replayButton.Location = new System.Drawing.Point(12, 215);
             this.replayButton.Name = "replayButton";
-            this.replayButton.Size = new System.Drawing.Size(104, 47);
+            this.replayButton.Size = new System.Drawing.Size(115, 55);
             this.replayButton.TabIndex = 3;
-            this.replayButton.Text = "Replay Recording";
+            this.replayButton.Text = "Start Playback (F1)";
             this.replayButton.UseVisualStyleBackColor = true;
             this.replayButton.Click += new System.EventHandler(this.replayButton_Click);
             // 
             // progressBar
             // 
-            this.progressBar.Location = new System.Drawing.Point(237, 417);
+            this.progressBar.Location = new System.Drawing.Point(189, 276);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(171, 47);
+            this.progressBar.Size = new System.Drawing.Size(59, 24);
             this.progressBar.TabIndex = 5;
             // 
             // timerLabel
@@ -96,7 +99,7 @@
             // 
             this.timerText.Location = new System.Drawing.Point(53, 74);
             this.timerText.Name = "timerText";
-            this.timerText.Size = new System.Drawing.Size(100, 20);
+            this.timerText.Size = new System.Drawing.Size(74, 20);
             this.timerText.TabIndex = 7;
             // 
             // eventLog
@@ -107,7 +110,7 @@
             this.timeOccurred});
             this.eventLog.Location = new System.Drawing.Point(12, 105);
             this.eventLog.Name = "eventLog";
-            this.eventLog.Size = new System.Drawing.Size(396, 295);
+            this.eventLog.Size = new System.Drawing.Size(238, 104);
             this.eventLog.TabIndex = 8;
             this.eventLog.UseCompatibleStateImageBehavior = false;
             this.eventLog.View = System.Windows.Forms.View.Details;
@@ -115,43 +118,43 @@
             // xCoordinate
             // 
             this.xCoordinate.Text = "X";
-            this.xCoordinate.Width = 88;
+            this.xCoordinate.Width = 50;
             // 
             // yCoordinate
             // 
             this.yCoordinate.Text = "Y";
-            this.yCoordinate.Width = 87;
+            this.yCoordinate.Width = 50;
             // 
             // timeOccurred
             // 
             this.timeOccurred.Text = "Time";
-            this.timeOccurred.Width = 245;
+            this.timeOccurred.Width = 175;
             // 
             // stopRecordingButton
             // 
-            this.stopRecordingButton.Location = new System.Drawing.Point(123, 417);
+            this.stopRecordingButton.Location = new System.Drawing.Point(135, 215);
             this.stopRecordingButton.Name = "stopRecordingButton";
-            this.stopRecordingButton.Size = new System.Drawing.Size(108, 47);
+            this.stopRecordingButton.Size = new System.Drawing.Size(115, 55);
             this.stopRecordingButton.TabIndex = 9;
-            this.stopRecordingButton.Text = "Stop Recording";
+            this.stopRecordingButton.Text = "End Playblack (F2)";
             this.stopRecordingButton.UseVisualStyleBackColor = true;
             this.stopRecordingButton.Click += new System.EventHandler(this.stopRecordingButton_Click);
             // 
             // resetButton
             // 
-            this.resetButton.Location = new System.Drawing.Point(259, 73);
+            this.resetButton.Location = new System.Drawing.Point(135, 73);
             this.resetButton.Name = "resetButton";
-            this.resetButton.Size = new System.Drawing.Size(110, 24);
+            this.resetButton.Size = new System.Drawing.Size(115, 24);
             this.resetButton.TabIndex = 10;
-            this.resetButton.Text = "Reset";
+            this.resetButton.Text = "Clear Actions";
             this.resetButton.UseVisualStyleBackColor = true;
             this.resetButton.Click += new System.EventHandler(this.resetButton_Click);
             // 
             // exportRecordingButton
             // 
-            this.exportRecordingButton.Location = new System.Drawing.Point(97, 471);
+            this.exportRecordingButton.Location = new System.Drawing.Point(11, 306);
             this.exportRecordingButton.Name = "exportRecordingButton";
-            this.exportRecordingButton.Size = new System.Drawing.Size(116, 31);
+            this.exportRecordingButton.Size = new System.Drawing.Size(115, 30);
             this.exportRecordingButton.TabIndex = 11;
             this.exportRecordingButton.Text = "Export Recording";
             this.exportRecordingButton.UseVisualStyleBackColor = true;
@@ -159,9 +162,9 @@
             // 
             // importRecordingButton
             // 
-            this.importRecordingButton.Location = new System.Drawing.Point(219, 471);
+            this.importRecordingButton.Location = new System.Drawing.Point(133, 306);
             this.importRecordingButton.Name = "importRecordingButton";
-            this.importRecordingButton.Size = new System.Drawing.Size(116, 31);
+            this.importRecordingButton.Size = new System.Drawing.Size(115, 30);
             this.importRecordingButton.TabIndex = 12;
             this.importRecordingButton.Text = "Import Recording";
             this.importRecordingButton.UseVisualStyleBackColor = true;
@@ -171,11 +174,39 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(132, 281);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(51, 13);
+            this.label1.TabIndex = 13;
+            this.label1.Text = "Progress:";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(14, 282);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(39, 13);
+            this.label2.TabIndex = 14;
+            this.label2.Text = "Loops:";
+            // 
+            // loopCounterText
+            // 
+            this.loopCounterText.Location = new System.Drawing.Point(56, 279);
+            this.loopCounterText.Name = "loopCounterText";
+            this.loopCounterText.Size = new System.Drawing.Size(69, 20);
+            this.loopCounterText.TabIndex = 15;
+            // 
             // autoClickerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(421, 514);
+            this.ClientSize = new System.Drawing.Size(263, 346);
+            this.Controls.Add(this.loopCounterText);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.importRecordingButton);
             this.Controls.Add(this.exportRecordingButton);
             this.Controls.Add(this.resetButton);
@@ -187,6 +218,7 @@
             this.Controls.Add(this.replayButton);
             this.Controls.Add(this.endButton);
             this.Controls.Add(this.startButton);
+            this.KeyPreview = true;
             this.Name = "autoClickerForm";
             this.Text = "Auto Clicker";
             this.TopMost = true;
@@ -213,6 +245,9 @@
         private System.Windows.Forms.Button importRecordingButton;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox loopCounterText;
     }
 }
 
