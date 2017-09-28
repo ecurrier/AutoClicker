@@ -35,9 +35,10 @@
             this.timerLabel = new System.Windows.Forms.Label();
             this.timerText = new System.Windows.Forms.TextBox();
             this.eventLog = new System.Windows.Forms.ListView();
-            this.xCoordinate = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.yCoordinate = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.action = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.detail = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.timeOccurred = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.precise = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.stopRecordingButton = new System.Windows.Forms.Button();
             this.resetButton = new System.Windows.Forms.Button();
             this.exportRecordingButton = new System.Windows.Forms.Button();
@@ -47,6 +48,8 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.loopCounterText = new System.Windows.Forms.TextBox();
+            this.runInfinitelyCheckBox = new System.Windows.Forms.CheckBox();
+            this.preciseCheckBox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // startButton
@@ -105,9 +108,10 @@
             // eventLog
             // 
             this.eventLog.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.xCoordinate,
-            this.yCoordinate,
-            this.timeOccurred});
+            this.action,
+            this.detail,
+            this.timeOccurred,
+            this.precise});
             this.eventLog.Location = new System.Drawing.Point(12, 105);
             this.eventLog.Name = "eventLog";
             this.eventLog.Size = new System.Drawing.Size(238, 104);
@@ -115,20 +119,25 @@
             this.eventLog.UseCompatibleStateImageBehavior = false;
             this.eventLog.View = System.Windows.Forms.View.Details;
             // 
-            // xCoordinate
+            // action
             // 
-            this.xCoordinate.Text = "X";
-            this.xCoordinate.Width = 50;
+            this.action.Text = "Action";
+            this.action.Width = 45;
             // 
-            // yCoordinate
+            // detail
             // 
-            this.yCoordinate.Text = "Y";
-            this.yCoordinate.Width = 50;
+            this.detail.Text = "Detail";
+            this.detail.Width = 45;
             // 
             // timeOccurred
             // 
             this.timeOccurred.Text = "Time";
-            this.timeOccurred.Width = 175;
+            this.timeOccurred.Width = 89;
+            // 
+            // precise
+            // 
+            this.precise.Text = "Precise?";
+            this.precise.Width = 55;
             // 
             // stopRecordingButton
             // 
@@ -152,7 +161,7 @@
             // 
             // exportRecordingButton
             // 
-            this.exportRecordingButton.Location = new System.Drawing.Point(11, 306);
+            this.exportRecordingButton.Location = new System.Drawing.Point(133, 308);
             this.exportRecordingButton.Name = "exportRecordingButton";
             this.exportRecordingButton.Size = new System.Drawing.Size(115, 30);
             this.exportRecordingButton.TabIndex = 11;
@@ -162,7 +171,7 @@
             // 
             // importRecordingButton
             // 
-            this.importRecordingButton.Location = new System.Drawing.Point(133, 306);
+            this.importRecordingButton.Location = new System.Drawing.Point(133, 344);
             this.importRecordingButton.Name = "importRecordingButton";
             this.importRecordingButton.Size = new System.Drawing.Size(115, 30);
             this.importRecordingButton.TabIndex = 12;
@@ -186,7 +195,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(14, 282);
+            this.label2.Location = new System.Drawing.Point(12, 353);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(39, 13);
             this.label2.TabIndex = 14;
@@ -194,16 +203,40 @@
             // 
             // loopCounterText
             // 
-            this.loopCounterText.Location = new System.Drawing.Point(56, 279);
+            this.loopCounterText.Location = new System.Drawing.Point(53, 350);
             this.loopCounterText.Name = "loopCounterText";
             this.loopCounterText.Size = new System.Drawing.Size(69, 20);
             this.loopCounterText.TabIndex = 15;
+            // 
+            // runInfinitelyCheckBox
+            // 
+            this.runInfinitelyCheckBox.AutoSize = true;
+            this.runInfinitelyCheckBox.Location = new System.Drawing.Point(29, 316);
+            this.runInfinitelyCheckBox.Name = "runInfinitelyCheckBox";
+            this.runInfinitelyCheckBox.Size = new System.Drawing.Size(93, 17);
+            this.runInfinitelyCheckBox.TabIndex = 16;
+            this.runInfinitelyCheckBox.Text = "Run Infinitely?";
+            this.runInfinitelyCheckBox.UseVisualStyleBackColor = true;
+            this.runInfinitelyCheckBox.CheckedChanged += new System.EventHandler(this.runInfinitelyCheckBox_CheckedChanged);
+            // 
+            // preciseCheckBox
+            // 
+            this.preciseCheckBox.AutoSize = true;
+            this.preciseCheckBox.Location = new System.Drawing.Point(28, 283);
+            this.preciseCheckBox.Name = "preciseCheckBox";
+            this.preciseCheckBox.Size = new System.Drawing.Size(100, 17);
+            this.preciseCheckBox.TabIndex = 17;
+            this.preciseCheckBox.Text = "Precise Action?";
+            this.preciseCheckBox.UseVisualStyleBackColor = true;
+            this.preciseCheckBox.CheckedChanged += new System.EventHandler(this.preciseCheckBox_CheckedChanged);
             // 
             // autoClickerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(263, 346);
+            this.ClientSize = new System.Drawing.Size(263, 386);
+            this.Controls.Add(this.preciseCheckBox);
+            this.Controls.Add(this.runInfinitelyCheckBox);
             this.Controls.Add(this.loopCounterText);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -236,8 +269,6 @@
         private System.Windows.Forms.Label timerLabel;
         private System.Windows.Forms.TextBox timerText;
         private System.Windows.Forms.ListView eventLog;
-        private System.Windows.Forms.ColumnHeader xCoordinate;
-        private System.Windows.Forms.ColumnHeader yCoordinate;
         private System.Windows.Forms.ColumnHeader timeOccurred;
         private System.Windows.Forms.Button stopRecordingButton;
         private System.Windows.Forms.Button resetButton;
@@ -248,6 +279,11 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox loopCounterText;
+        private System.Windows.Forms.CheckBox runInfinitelyCheckBox;
+        private System.Windows.Forms.CheckBox preciseCheckBox;
+        private System.Windows.Forms.ColumnHeader action;
+        private System.Windows.Forms.ColumnHeader detail;
+        private System.Windows.Forms.ColumnHeader precise;
     }
 }
 
