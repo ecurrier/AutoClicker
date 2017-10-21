@@ -32,7 +32,8 @@ namespace AutoClicker
         private int autoChatterMinuteCheck = 15;
         private int playbackLoopAmount = 0;
 
-        private bool recordingActions = false;
+        private bool playbackActive = false;
+        private bool recordingActive = false;
         private bool nextActionPrecise = false;
         private bool runInfinitely = false;
 
@@ -41,19 +42,6 @@ namespace AutoClicker
         private Stopwatch autoChatterStopwatch = new Stopwatch();
         private BackgroundWorker playbackThread = new BackgroundWorker();
         private List<EventRecord> recordingEvents = new List<EventRecord>();
-
-        private List<string> Conversations = new List<string>
-        {
-            "sup sup",
-            "runecrafting levels",
-            "hello everyone",
-            "what a lovely day",
-            "i love jagex",
-            "who here loves runescape",
-            "can i get a w00t w00t",
-            "oops wrong chat",
-            "1"
-        };
 
         public autoClickerForm()
         {
@@ -81,7 +69,7 @@ namespace AutoClicker
 
         private void HandleMouseDown(object sender, MouseEventArgs e)
         {
-            if (!recordingActions)
+            if (!recordingActive)
             {
                 return;
             }
@@ -140,7 +128,7 @@ namespace AutoClicker
                     return;
             }
 
-            if (!recordingActions)
+            if (!recordingActive)
             {
                 return;
             }
@@ -176,17 +164,17 @@ namespace AutoClicker
         {
             recordingTimer.Start();
             recordingStopwatch.Start();
-            recordingActions = true;
+            recordingActive = true;
         }
 
         private void endButton_Click(object sender, EventArgs e)
         {
-            if (!recordingActions)
+            if (!recordingActive)
             {
                 return;
             }
 
-            recordingActions = false;
+            recordingActive = false;
 
             // Remove the click recorded for ending the recording
             recordingEvents.RemoveAt(recordingEvents.Count - 1);
@@ -232,6 +220,12 @@ namespace AutoClicker
 
         private void StartPlayback()
         {
+            if (playbackActive)
+            {
+                return;
+            }
+
+            playbackActive = true;
             progressBar.Maximum = (int)recordingEvents.Last().time;
 
             if (!string.IsNullOrEmpty(loopCounterText.Text))
@@ -245,7 +239,6 @@ namespace AutoClicker
         private void PlaybackRecording(object sender, DoWorkEventArgs e)
         {
             var playbackStopWatch = new Stopwatch();
-            var loopTracker = 0;
 
             while (true)
             {
@@ -284,68 +277,17 @@ namespace AutoClicker
                         playbackStopWatch.Start();
                     }
                 }
-                
-                //TypeRandomConversation(autoChatterStopwatch);
-
-                loopTracker++;
-                Invoke((MethodInvoker)delegate {
-                    UpdateFormTitleText(loopTracker.ToString());
-                });
 
                 if (!runInfinitely)
                 {
                     playbackLoopAmount--;
                     if (playbackLoopAmount == 0)
                     {
-                        playbackThread.CancelAsync();
-                        break;
+                        EndPlayback();
+                        return;
                     }
                 }
             }
-        }
-
-        public void TypeRandomConversation(Stopwatch autoChatterStopwatch)
-        {
-            if (autoChatterStopwatch.ElapsedMilliseconds < autoChatterMinuteCheck * 60 * 1000)
-            {
-                return;
-            }
-
-            autoChatterMinuteCheck = new Random().Next(10, 21);
-
-            var conversationIndex = new Random().Next(0, Conversations.Count);
-            var conversation = Conversations.ElementAt(conversationIndex);
-
-            TypeConversation(conversation);
-        }
-
-        public void TypeConversation(string conversation)
-        {
-            var conversationChars = conversation.ToCharArray();
-            foreach(var conversationChar in conversationChars)
-            {
-                var key = ConvertCharToVirtualKey(conversationChar);
-                keyClick((int)key);
-                Thread.Sleep(new Random().Next(75, 125));
-            } 
-        }
-
-        public Keys ConvertCharToVirtualKey(char ch)
-        {
-            short vkey = VkKeyScan(ch);
-            Keys retval = (Keys)(vkey & 0xff);
-            int modifiers = vkey >> 8;
-            if ((modifiers & 1) != 0) retval |= Keys.Shift;
-            if ((modifiers & 2) != 0) retval |= Keys.Control;
-            if ((modifiers & 4) != 0) retval |= Keys.Alt;
-            return retval;
-        }
-
-        public void UpdateFormTitleText(string text)
-        {
-            Invoke((MethodInvoker)delegate {
-                Text = $"Auto Clicker ({text})";
-            });
         }
 
         public void UpdateLoopCounterTextBox(string text)
@@ -381,6 +323,12 @@ namespace AutoClicker
 
         private void EndPlayback()
         {
+            if (!playbackActive)
+            {
+                return;
+            }
+
+            playbackActive = false;
             playbackThread.CancelAsync();
         }
 
