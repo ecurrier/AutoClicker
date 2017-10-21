@@ -51,9 +51,6 @@ Temporary Items
 *.user
 *.sln.docstates
 
-[Dd]ebug/
-[Rr]elease/
-x64/
-build/
-[Bb]in/
-[Oo]bj/
+AutoClicker\AutoClicker\bin
+AutoClicker\AutoClicker\obj
+AutoClicker\.vs
