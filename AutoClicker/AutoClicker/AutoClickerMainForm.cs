@@ -30,6 +30,7 @@ namespace AutoClicker
         private const int MOUSEEVENTF_RIGHTUP = 0x0010;
 
         private int autoChatterMinuteCheck = 15;
+        private int playbackLoopAmount = 0;
 
         private bool recordingActions = false;
         private bool nextActionPrecise = false;
@@ -46,7 +47,12 @@ namespace AutoClicker
             "sup sup",
             "runecrafting levels",
             "hello everyone",
-            "what a lovely day"
+            "what a lovely day",
+            "i love jagex",
+            "who here loves runescape",
+            "can i get a w00t w00t",
+            "oops wrong chat",
+            "1"
         };
 
         public autoClickerForm()
@@ -198,15 +204,6 @@ namespace AutoClicker
 
         private void mouseClick(int x, int y, bool leftClick, bool preciseClick)
         {
-            if (!preciseClick)
-            {
-                var xOffset = new Random().Next(-5, 6);
-                var yOffset = new Random().Next(-5, 6);
-
-                x = x + xOffset;
-                y = y + yOffset;
-            }
-
             Cursor.Position = new Point(x, y);
             
             Thread.Sleep(new Random().Next(150, 451));
@@ -236,6 +233,12 @@ namespace AutoClicker
         private void StartPlayback()
         {
             progressBar.Maximum = (int)recordingEvents.Last().time;
+
+            if (!string.IsNullOrEmpty(loopCounterText.Text))
+            {
+                playbackLoopAmount = int.Parse(loopCounterText.Text);
+            }
+
             playbackThread.RunWorkerAsync();
         }
 
@@ -282,7 +285,7 @@ namespace AutoClicker
                     }
                 }
                 
-                TypeRandomConversation(autoChatterStopwatch);
+                //TypeRandomConversation(autoChatterStopwatch);
 
                 loopTracker++;
                 Invoke((MethodInvoker)delegate {
@@ -291,17 +294,12 @@ namespace AutoClicker
 
                 if (!runInfinitely)
                 {
-                    var currentLoopCount = int.Parse(loopCounterText.Text);
-                    if (currentLoopCount == 0)
+                    playbackLoopAmount--;
+                    if (playbackLoopAmount == 0)
                     {
                         playbackThread.CancelAsync();
                         break;
                     }
-
-                    currentLoopCount--;
-                    Invoke((MethodInvoker)delegate {
-                        UpdateLoopCounterTextBox(currentLoopCount.ToString());
-                    });
                 }
             }
         }
@@ -359,6 +357,11 @@ namespace AutoClicker
 
         public void UpdateProgressBar(int time)
         {
+            if (progressBar.Maximum <= time)
+            {
+                return;
+            }
+
             Invoke((MethodInvoker)delegate
             {
                 progressBar.Value = time;
