@@ -29,6 +29,11 @@ namespace AutoClicker
         private const int MOUSEEVENTF_RIGHTDOWN = 0x0008;
         private const int MOUSEEVENTF_RIGHTUP = 0x0010;
 
+        private enum EventTypes {
+            Mouse = 1,
+            Key = 2
+        };
+
         private int autoChatterMinuteCheck = 15;
         private int playbackLoopAmount = 0;
 
@@ -80,7 +85,7 @@ namespace AutoClicker
                 leftClick = false;
             }
 
-            LogMouseDownEvent(1, e.X, e.Y, leftClick, recordingStopwatch.ElapsedMilliseconds, nextActionPrecise);
+            LogMouseDownEvent((int)EventTypes.Mouse, e.X, e.Y, leftClick, recordingStopwatch.ElapsedMilliseconds, nextActionPrecise);
 
             if (nextActionPrecise)
             {
@@ -133,7 +138,7 @@ namespace AutoClicker
                 return;
             }
 
-            LogKeyDownEvent(2, (int)e.KeyCode, e.KeyCode.ToString(), recordingStopwatch.ElapsedMilliseconds);
+            LogKeyDownEvent((int)EventTypes.Key, (int)e.KeyCode, e.KeyCode.ToString(), recordingStopwatch.ElapsedMilliseconds);
         }
 
         private void LogKeyDownEvent(int eventType, int keyCode, string keyLabel, long time)
@@ -264,11 +269,11 @@ namespace AutoClicker
                         // Stop the stopwatch while click is performed since stopwatch continues running in the background
                         playbackStopWatch.Stop();
 
-                        if (recordingEvent.eventType == 1)
+                        if (recordingEvent.eventType == (int)EventTypes.Mouse)
                         {
                             mouseClick(recordingEvent.x, recordingEvent.y, recordingEvent.leftClick, recordingEvent.preciseClick);
                         }
-                        else if (recordingEvent.eventType == 2)
+                        else if (recordingEvent.eventType == (int)EventTypes.Key)
                         {
                             keyClick(recordingEvent.keyCode);
                         }
@@ -346,11 +351,11 @@ namespace AutoClicker
                 {
                     for (var i = 0; i < recordingEvents.Count; i++)
                     {
-                        if (recordingEvents[i].eventType == 1)
+                        if (recordingEvents[i].eventType == (int)EventTypes.Mouse)
                         {
                             sw.WriteLine($"{recordingEvents[i].eventType},{recordingEvents[i].x},{recordingEvents[i].y},{recordingEvents[i].leftClick.ToString()},{recordingEvents[i].time},{recordingEvents[i].preciseClick.ToString()}");
                         }
-                        else if (recordingEvents[i].eventType == 2)
+                        else if (recordingEvents[i].eventType == (int)EventTypes.Key)
                         {
                             sw.WriteLine($"{recordingEvents[i].eventType},{recordingEvents[i].keyCode},{recordingEvents[i].keyLabel},{recordingEvents[i].time}");
                         }
@@ -372,11 +377,11 @@ namespace AutoClicker
             List<EventRecord> importedEvents = File.ReadAllLines(fileName).Select(v => EventRecord.FromCsv(v)).ToList();
             foreach (var importedEvent in importedEvents)
             {
-                if (importedEvent.eventType == 1)
+                if (importedEvent.eventType == (int)EventTypes.Mouse)
                 {
-                    LogMouseDownEvent(1, importedEvent.x, importedEvent.y, importedEvent.leftClick, importedEvent.time, importedEvent.preciseClick);
+                    LogMouseDownEvent(importedEvent.eventType, importedEvent.x, importedEvent.y, importedEvent.leftClick, importedEvent.time, importedEvent.preciseClick);
                 }
-                else if (importedEvent.eventType == 2)
+                else if (importedEvent.eventType == (int)EventTypes.Key)
                 {
                     LogKeyDownEvent(importedEvent.eventType, importedEvent.keyCode, importedEvent.keyLabel, importedEvent.time);
                 }
@@ -419,6 +424,12 @@ namespace AutoClicker
 
     public class EventRecord
     {
+        private enum EventTypes
+        {
+            Mouse = 1,
+            Key = 2
+        };
+
         public int eventType; // Click = 1, Key = 2
         public int x;
         public int y;
@@ -436,7 +447,7 @@ namespace AutoClicker
                 eventType = Convert.ToInt32(values[0])
             };
 
-            if (eventRecord.eventType == 1)
+            if (eventRecord.eventType == (int)EventTypes.Mouse)
             {
                 eventRecord.x = Convert.ToInt32(values[1]);
                 eventRecord.y = Convert.ToInt32(values[2]);
@@ -444,7 +455,7 @@ namespace AutoClicker
                 eventRecord.time = Convert.ToInt64(values[4]);
                 eventRecord.preciseClick = Convert.ToBoolean(values[5]);
             }
-            else if (eventRecord.eventType == 2)
+            else if (eventRecord.eventType == (int)EventTypes.Key)
             {
                 eventRecord.keyCode = Convert.ToInt32(values[1]);
                 eventRecord.keyLabel = Convert.ToString(values[2]);
