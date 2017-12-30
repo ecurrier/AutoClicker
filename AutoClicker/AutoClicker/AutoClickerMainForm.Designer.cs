@@ -50,13 +50,15 @@
             this.loopCounterText = new System.Windows.Forms.TextBox();
             this.runInfinitelyCheckBox = new System.Windows.Forms.CheckBox();
             this.preciseCheckBox = new System.Windows.Forms.CheckBox();
+            this.suspendPlaybackButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // startButton
             // 
-            this.startButton.Location = new System.Drawing.Point(12, 12);
+            this.startButton.Location = new System.Drawing.Point(18, 18);
+            this.startButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.startButton.Name = "startButton";
-            this.startButton.Size = new System.Drawing.Size(115, 55);
+            this.startButton.Size = new System.Drawing.Size(172, 85);
             this.startButton.TabIndex = 0;
             this.startButton.Text = "Start Recording";
             this.startButton.UseVisualStyleBackColor = true;
@@ -64,9 +66,10 @@
             // 
             // endButton
             // 
-            this.endButton.Location = new System.Drawing.Point(135, 12);
+            this.endButton.Location = new System.Drawing.Point(202, 18);
+            this.endButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.endButton.Name = "endButton";
-            this.endButton.Size = new System.Drawing.Size(115, 55);
+            this.endButton.Size = new System.Drawing.Size(172, 85);
             this.endButton.TabIndex = 1;
             this.endButton.Text = "End Recording";
             this.endButton.UseVisualStyleBackColor = true;
@@ -74,9 +77,10 @@
             // 
             // replayButton
             // 
-            this.replayButton.Location = new System.Drawing.Point(12, 215);
+            this.replayButton.Location = new System.Drawing.Point(18, 331);
+            this.replayButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.replayButton.Name = "replayButton";
-            this.replayButton.Size = new System.Drawing.Size(115, 55);
+            this.replayButton.Size = new System.Drawing.Size(172, 40);
             this.replayButton.TabIndex = 3;
             this.replayButton.Text = "Start Playback (F1)";
             this.replayButton.UseVisualStyleBackColor = true;
@@ -84,25 +88,28 @@
             // 
             // progressBar
             // 
-            this.progressBar.Location = new System.Drawing.Point(189, 276);
+            this.progressBar.Location = new System.Drawing.Point(284, 425);
+            this.progressBar.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(59, 24);
+            this.progressBar.Size = new System.Drawing.Size(88, 37);
             this.progressBar.TabIndex = 5;
             // 
             // timerLabel
             // 
             this.timerLabel.AutoSize = true;
-            this.timerLabel.Location = new System.Drawing.Point(14, 77);
+            this.timerLabel.Location = new System.Drawing.Point(21, 118);
+            this.timerLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.timerLabel.Name = "timerLabel";
-            this.timerLabel.Size = new System.Drawing.Size(33, 13);
+            this.timerLabel.Size = new System.Drawing.Size(47, 20);
             this.timerLabel.TabIndex = 6;
             this.timerLabel.Text = "Time:";
             // 
             // timerText
             // 
-            this.timerText.Location = new System.Drawing.Point(53, 74);
+            this.timerText.Location = new System.Drawing.Point(80, 114);
+            this.timerText.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.timerText.Name = "timerText";
-            this.timerText.Size = new System.Drawing.Size(74, 20);
+            this.timerText.Size = new System.Drawing.Size(109, 26);
             this.timerText.TabIndex = 7;
             // 
             // eventLog
@@ -112,9 +119,10 @@
             this.detail,
             this.timeOccurred,
             this.precise});
-            this.eventLog.Location = new System.Drawing.Point(12, 105);
+            this.eventLog.Location = new System.Drawing.Point(18, 162);
+            this.eventLog.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.eventLog.Name = "eventLog";
-            this.eventLog.Size = new System.Drawing.Size(238, 104);
+            this.eventLog.Size = new System.Drawing.Size(355, 158);
             this.eventLog.TabIndex = 8;
             this.eventLog.UseCompatibleStateImageBehavior = false;
             this.eventLog.View = System.Windows.Forms.View.Details;
@@ -141,9 +149,10 @@
             // 
             // stopRecordingButton
             // 
-            this.stopRecordingButton.Location = new System.Drawing.Point(135, 215);
+            this.stopRecordingButton.Location = new System.Drawing.Point(202, 331);
+            this.stopRecordingButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.stopRecordingButton.Name = "stopRecordingButton";
-            this.stopRecordingButton.Size = new System.Drawing.Size(115, 55);
+            this.stopRecordingButton.Size = new System.Drawing.Size(172, 40);
             this.stopRecordingButton.TabIndex = 9;
             this.stopRecordingButton.Text = "End Playblack (F2)";
             this.stopRecordingButton.UseVisualStyleBackColor = true;
@@ -151,9 +160,10 @@
             // 
             // resetButton
             // 
-            this.resetButton.Location = new System.Drawing.Point(135, 73);
+            this.resetButton.Location = new System.Drawing.Point(202, 112);
+            this.resetButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.resetButton.Name = "resetButton";
-            this.resetButton.Size = new System.Drawing.Size(115, 24);
+            this.resetButton.Size = new System.Drawing.Size(172, 37);
             this.resetButton.TabIndex = 10;
             this.resetButton.Text = "Clear Actions";
             this.resetButton.UseVisualStyleBackColor = true;
@@ -161,9 +171,10 @@
             // 
             // exportRecordingButton
             // 
-            this.exportRecordingButton.Location = new System.Drawing.Point(133, 308);
+            this.exportRecordingButton.Location = new System.Drawing.Point(200, 474);
+            this.exportRecordingButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.exportRecordingButton.Name = "exportRecordingButton";
-            this.exportRecordingButton.Size = new System.Drawing.Size(115, 30);
+            this.exportRecordingButton.Size = new System.Drawing.Size(172, 46);
             this.exportRecordingButton.TabIndex = 11;
             this.exportRecordingButton.Text = "Export Recording";
             this.exportRecordingButton.UseVisualStyleBackColor = true;
@@ -171,9 +182,10 @@
             // 
             // importRecordingButton
             // 
-            this.importRecordingButton.Location = new System.Drawing.Point(133, 344);
+            this.importRecordingButton.Location = new System.Drawing.Point(200, 529);
+            this.importRecordingButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.importRecordingButton.Name = "importRecordingButton";
-            this.importRecordingButton.Size = new System.Drawing.Size(115, 30);
+            this.importRecordingButton.Size = new System.Drawing.Size(172, 46);
             this.importRecordingButton.TabIndex = 12;
             this.importRecordingButton.Text = "Import Recording";
             this.importRecordingButton.UseVisualStyleBackColor = true;
@@ -186,34 +198,38 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(132, 281);
+            this.label1.Location = new System.Drawing.Point(198, 432);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(51, 13);
+            this.label1.Size = new System.Drawing.Size(76, 20);
             this.label1.TabIndex = 13;
             this.label1.Text = "Progress:";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 353);
+            this.label2.Location = new System.Drawing.Point(18, 543);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(39, 13);
+            this.label2.Size = new System.Drawing.Size(57, 20);
             this.label2.TabIndex = 14;
             this.label2.Text = "Loops:";
             // 
             // loopCounterText
             // 
-            this.loopCounterText.Location = new System.Drawing.Point(53, 350);
+            this.loopCounterText.Location = new System.Drawing.Point(80, 538);
+            this.loopCounterText.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.loopCounterText.Name = "loopCounterText";
-            this.loopCounterText.Size = new System.Drawing.Size(69, 20);
+            this.loopCounterText.Size = new System.Drawing.Size(102, 26);
             this.loopCounterText.TabIndex = 15;
             // 
             // runInfinitelyCheckBox
             // 
             this.runInfinitelyCheckBox.AutoSize = true;
-            this.runInfinitelyCheckBox.Location = new System.Drawing.Point(29, 316);
+            this.runInfinitelyCheckBox.Location = new System.Drawing.Point(44, 486);
+            this.runInfinitelyCheckBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.runInfinitelyCheckBox.Name = "runInfinitelyCheckBox";
-            this.runInfinitelyCheckBox.Size = new System.Drawing.Size(93, 17);
+            this.runInfinitelyCheckBox.Size = new System.Drawing.Size(136, 24);
             this.runInfinitelyCheckBox.TabIndex = 16;
             this.runInfinitelyCheckBox.Text = "Run Infinitely?";
             this.runInfinitelyCheckBox.UseVisualStyleBackColor = true;
@@ -222,19 +238,31 @@
             // preciseCheckBox
             // 
             this.preciseCheckBox.AutoSize = true;
-            this.preciseCheckBox.Location = new System.Drawing.Point(28, 283);
+            this.preciseCheckBox.Location = new System.Drawing.Point(42, 435);
+            this.preciseCheckBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.preciseCheckBox.Name = "preciseCheckBox";
-            this.preciseCheckBox.Size = new System.Drawing.Size(100, 17);
+            this.preciseCheckBox.Size = new System.Drawing.Size(145, 24);
             this.preciseCheckBox.TabIndex = 17;
             this.preciseCheckBox.Text = "Precise Action?";
             this.preciseCheckBox.UseVisualStyleBackColor = true;
             this.preciseCheckBox.CheckedChanged += new System.EventHandler(this.preciseCheckBox_CheckedChanged);
             // 
+            // suspendPlaybackButton
+            // 
+            this.suspendPlaybackButton.Location = new System.Drawing.Point(18, 377);
+            this.suspendPlaybackButton.Name = "suspendPlaybackButton";
+            this.suspendPlaybackButton.Size = new System.Drawing.Size(354, 40);
+            this.suspendPlaybackButton.TabIndex = 18;
+            this.suspendPlaybackButton.Text = "Suspend Playback (F3)";
+            this.suspendPlaybackButton.UseVisualStyleBackColor = true;
+            this.suspendPlaybackButton.Click += new System.EventHandler(this.suspendPlaybackButton_Click);
+            // 
             // autoClickerForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(263, 386);
+            this.ClientSize = new System.Drawing.Size(394, 594);
+            this.Controls.Add(this.suspendPlaybackButton);
             this.Controls.Add(this.preciseCheckBox);
             this.Controls.Add(this.runInfinitelyCheckBox);
             this.Controls.Add(this.loopCounterText);
@@ -252,6 +280,7 @@
             this.Controls.Add(this.endButton);
             this.Controls.Add(this.startButton);
             this.KeyPreview = true;
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "autoClickerForm";
             this.Text = "Auto Clicker";
             this.TopMost = true;
@@ -284,6 +313,7 @@
         private System.Windows.Forms.ColumnHeader action;
         private System.Windows.Forms.ColumnHeader detail;
         private System.Windows.Forms.ColumnHeader precise;
+        private System.Windows.Forms.Button suspendPlaybackButton;
     }
 }
 

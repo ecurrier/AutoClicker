@@ -7,3 +7,13 @@ C:\Users\ecurri3\Documents\GitHub\AutoClicker\AutoClicker\AutoClicker\obj\x86\De
 C:\Users\ecurri3\Documents\GitHub\AutoClicker\AutoClicker\AutoClicker\obj\x86\Debug\AutoClicker.exe
 C:\Users\ecurri3\Documents\GitHub\AutoClicker\AutoClicker\AutoClicker\obj\x86\Debug\AutoClicker.pdb
 C:\Users\ecurri3\Documents\GitHub\AutoClicker\AutoClicker\AutoClicker\obj\x86\Debug\AutoClicker.csprojResolveAssemblyReference.cache
+C:\Users\Evan\Documents\GitHub\AutoClicker\AutoClicker\AutoClicker\bin\x86\Debug\AutoClicker.exe.config
+C:\Users\Evan\Documents\GitHub\AutoClicker\AutoClicker\AutoClicker\bin\x86\Debug\AutoClicker.exe
+C:\Users\Evan\Documents\GitHub\AutoClicker\AutoClicker\AutoClicker\bin\x86\Debug\AutoClicker.pdb
+C:\Users\Evan\Documents\GitHub\AutoClicker\AutoClicker\AutoClicker\obj\x86\Debug\AutoClicker.csprojResolveAssemblyReference.cache
+C:\Users\Evan\Documents\GitHub\AutoClicker\AutoClicker\AutoClicker\obj\x86\Debug\AutoClicker.autoClickerForm.resources
+C:\Users\Evan\Documents\GitHub\AutoClicker\AutoClicker\AutoClicker\obj\x86\Debug\AutoClicker.Properties.Resources.resources
+C:\Users\Evan\Documents\GitHub\AutoClicker\AutoClicker\AutoClicker\obj\x86\Debug\AutoClicker.csproj.GenerateResource.Cache
+C:\Users\Evan\Documents\GitHub\AutoClicker\AutoClicker\AutoClicker\obj\x86\Debug\AutoClicker.csproj.CoreCompileInputs.cache
+C:\Users\Evan\Documents\GitHub\AutoClicker\AutoClicker\AutoClicker\obj\x86\Debug\AutoClicker.exe
+C:\Users\Evan\Documents\GitHub\AutoClicker\AutoClicker\AutoClicker\obj\x86\Debug\AutoClicker.pdb

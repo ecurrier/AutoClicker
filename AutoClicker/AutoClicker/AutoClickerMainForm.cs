@@ -33,17 +33,22 @@ namespace AutoClicker
             Mouse = 1,
             Key = 2
         };
-
-        private int autoChatterMinuteCheck = 15;
+        
         private int playbackLoopAmount = 0;
 
         private bool playbackActive = false;
         private bool recordingActive = false;
+        private bool suspensionActive = false;
         private bool nextActionPrecise = false;
         private bool runInfinitely = false;
 
+        private bool isShiftDown = false;
+        private bool isControlDown = false;
+        private bool isAltDown = false;
+
         private System.Windows.Forms.Timer recordingTimer = new System.Windows.Forms.Timer();
         private Stopwatch recordingStopwatch = new Stopwatch();
+        private Stopwatch playbackStopWatch = new Stopwatch();
         private Stopwatch autoChatterStopwatch = new Stopwatch();
         private BackgroundWorker playbackThread = new BackgroundWorker();
         private List<EventRecord> recordingEvents = new List<EventRecord>();
@@ -70,6 +75,7 @@ namespace AutoClicker
             // Hook MouseDown and KeyDown functions
             HookManager.MouseDown += HandleMouseDown;
             HookManager.KeyDown += HandleKeyDown;
+            HookManager.KeyUp += HandleKeyUp;
         }
 
         private void HandleMouseDown(object sender, MouseEventArgs e)
@@ -103,7 +109,10 @@ namespace AutoClicker
                 y = yCoord,
                 leftClick = leftClick,
                 time = time,
-                preciseClick = preciseClick
+                preciseClick = preciseClick,
+                shiftModifier = isShiftDown,
+                controlModifier = isControlDown,
+                altModifier = isAltDown
             });
 
             string action = leftClick ? "Left Click" : "Right Click";
@@ -131,6 +140,20 @@ namespace AutoClicker
                 case Keys.F2:
                     EndPlayback();
                     return;
+                case Keys.F3:
+                    SuspendPlayback();
+                    return;
+                case Keys.LShiftKey:
+                case Keys.RShiftKey:
+                    isShiftDown = true;
+                    return;
+                case Keys.LControlKey:
+                case Keys.RControlKey:
+                    isControlDown = true;
+                    return;
+                case Keys.Alt:
+                    isAltDown = true;
+                    return;
             }
 
             if (!recordingActive)
@@ -139,6 +162,29 @@ namespace AutoClicker
             }
 
             LogKeyDownEvent((int)EventTypes.Key, (int)e.KeyCode, e.KeyCode.ToString(), recordingStopwatch.ElapsedMilliseconds);
+        }
+
+        private void HandleKeyUp(object sender, KeyEventArgs e)
+        {
+            if (!recordingActive)
+            {
+                return;
+            }
+
+            switch (e.KeyCode)
+            {
+                case Keys.LShiftKey:
+                case Keys.RShiftKey:
+                    isShiftDown = false;
+                    return;
+                case Keys.LControlKey:
+                case Keys.RControlKey:
+                    isControlDown = false;
+                    return;
+                case Keys.Alt:
+                    isAltDown = false;
+                    return;
+            }
         }
 
         private void LogKeyDownEvent(int eventType, int keyCode, string keyLabel, long time)
@@ -195,11 +241,26 @@ namespace AutoClicker
             timerText.Text = $"{elapsed.Minutes}:{elapsed.Seconds}:{elapsed.Milliseconds}";
         }
 
-        private void mouseClick(int x, int y, bool leftClick, bool preciseClick)
+        private void mouseClick(int x, int y, bool leftClick, bool preciseClick, bool shiftModifier, bool controlModifier, bool altModifier)
         {
             Cursor.Position = new Point(x, y);
-            
+
             Thread.Sleep(new Random().Next(150, 451));
+            
+            if (shiftModifier)
+            {
+                keybd_event(0x10, 0, 1 | 0, 0);
+            }
+
+            if (controlModifier)
+            {
+                keybd_event(0x11, 0, 1 | 0, 0);
+            }
+
+            if (altModifier)
+            {
+                keybd_event(0x12, 0, 1 | 0, 0);
+            }
 
             if (leftClick)
             {
@@ -210,6 +271,21 @@ namespace AutoClicker
             {
                 mouse_event(MOUSEEVENTF_RIGHTDOWN, Cursor.Position.X, Cursor.Position.Y, 0, 0);
                 mouse_event(MOUSEEVENTF_RIGHTUP, Cursor.Position.X, Cursor.Position.Y, 0, 0);
+            }
+            
+            if (shiftModifier)
+            {
+                keybd_event(0x10, 0, 1 | 0x0002, 0);
+            }
+
+            if (controlModifier)
+            {
+                keybd_event(0x11, 0, 1 | 0x0002, 0);
+            }
+
+            if (altModifier)
+            {
+                keybd_event(0x12, 0, 1 | 0x0002, 0);
             }
         }
 
@@ -243,7 +319,7 @@ namespace AutoClicker
 
         private void PlaybackRecording(object sender, DoWorkEventArgs e)
         {
-            var playbackStopWatch = new Stopwatch();
+            playbackStopWatch = new Stopwatch();
 
             while (true)
             {
@@ -271,7 +347,7 @@ namespace AutoClicker
 
                         if (recordingEvent.eventType == (int)EventTypes.Mouse)
                         {
-                            mouseClick(recordingEvent.x, recordingEvent.y, recordingEvent.leftClick, recordingEvent.preciseClick);
+                            mouseClick(recordingEvent.x, recordingEvent.y, recordingEvent.leftClick, recordingEvent.preciseClick, recordingEvent.shiftModifier, recordingEvent.controlModifier, recordingEvent.altModifier);
                         }
                         else if (recordingEvent.eventType == (int)EventTypes.Key)
                         {
@@ -353,7 +429,7 @@ namespace AutoClicker
                     {
                         if (recordingEvents[i].eventType == (int)EventTypes.Mouse)
                         {
-                            sw.WriteLine($"{recordingEvents[i].eventType},{recordingEvents[i].x},{recordingEvents[i].y},{recordingEvents[i].leftClick.ToString()},{recordingEvents[i].time},{recordingEvents[i].preciseClick.ToString()}");
+                            sw.WriteLine($"{recordingEvents[i].eventType},{recordingEvents[i].x},{recordingEvents[i].y},{recordingEvents[i].leftClick.ToString()},{recordingEvents[i].time},{recordingEvents[i].preciseClick.ToString()},{recordingEvents[i].shiftModifier.ToString()},{recordingEvents[i].controlModifier.ToString()},{recordingEvents[i].altModifier.ToString()}");
                         }
                         else if (recordingEvents[i].eventType == (int)EventTypes.Key)
                         {
@@ -420,6 +496,34 @@ namespace AutoClicker
             preciseCheckBox.Checked = false;
             nextActionPrecise = false;
         }
+
+        private void SuspendPlayback()
+        {
+            if (!playbackActive)
+            {
+                return;
+            }
+
+            if (suspensionActive)
+            {
+                // Resume Playback
+                playbackStopWatch.Start();
+                suspendPlaybackButton.Text = "Suspend Playback (F3)";
+                suspensionActive = false;
+            }
+            else
+            {
+                // Suspend Playback
+                playbackStopWatch.Stop();
+                suspendPlaybackButton.Text = "Resume Playback (F3)";
+                suspensionActive = true;
+            }
+        }
+
+        private void suspendPlaybackButton_Click(object sender, EventArgs e)
+        {
+            SuspendPlayback();
+        }
     }
 
     public class EventRecord
@@ -438,6 +542,9 @@ namespace AutoClicker
         public bool leftClick;
         public long time;
         public bool preciseClick;
+        public bool shiftModifier;
+        public bool controlModifier;
+        public bool altModifier;
 
         public static EventRecord FromCsv(string line)
         {
@@ -454,6 +561,9 @@ namespace AutoClicker
                 eventRecord.leftClick = Convert.ToBoolean(values[3]);
                 eventRecord.time = Convert.ToInt64(values[4]);
                 eventRecord.preciseClick = Convert.ToBoolean(values[5]);
+                eventRecord.shiftModifier = Convert.ToBoolean(values[6]);
+                eventRecord.controlModifier = Convert.ToBoolean(values[7]);
+                eventRecord.altModifier = Convert.ToBoolean(values[8]);
             }
             else if (eventRecord.eventType == (int)EventTypes.Key)
             {
