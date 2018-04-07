@@ -249,17 +249,17 @@ namespace AutoClicker
             
             if (shiftModifier)
             {
-                keybd_event(0x10, 0, 1 | 0, 0);
+                keybd_event(0xA0, 0, 0, 0);
             }
 
             if (controlModifier)
             {
-                keybd_event(0x11, 0, 1 | 0, 0);
+                keybd_event(0xA2, 0, 0, 0);
             }
 
             if (altModifier)
             {
-                keybd_event(0x12, 0, 1 | 0, 0);
+                keybd_event(0xA4, 0, 0, 0);
             }
 
             if (leftClick)
@@ -273,25 +273,27 @@ namespace AutoClicker
                 mouse_event(MOUSEEVENTF_RIGHTUP, Cursor.Position.X, Cursor.Position.Y, 0, 0);
             }
             
+            // Release Keys
+
             if (shiftModifier)
             {
-                keybd_event(0x10, 0, 1 | 0x0002, 0);
+                keybd_event(0xA0, 0, 0x2, 0); // 0x2 using in dwFlags parameter to signify key is being released
             }
 
             if (controlModifier)
             {
-                keybd_event(0x11, 0, 1 | 0x0002, 0);
+                keybd_event(0xA2, 0, 0x2, 0);
             }
 
             if (altModifier)
             {
-                keybd_event(0x12, 0, 1 | 0x0002, 0);
+                keybd_event(0xA4, 0, 0x2, 0);
             }
         }
 
         private void keyClick(int keyCode)
         {
-            keybd_event(Convert.ToByte(keyCode), 0, 1 | 0, 0);
+            keybd_event(Convert.ToByte(keyCode), 0, 0, 0);
         }
 
         private void replayButton_Click(object sender, EventArgs e)
