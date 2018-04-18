@@ -355,9 +355,21 @@ namespace AutoClicker
                         {
                             keyClick(recordingEvent.keyCode);
                         }
+                        
+                        var nextEvent = i == recordingEvents.Count - 1 ? null : recordingEvents[i + 1];
+                        if (nextEvent != null)
+                        {
+                            var downTime = nextEvent.time - playbackStopWatch.ElapsedMilliseconds;
+
+                            playbackStopWatch.Start();
+                            Thread.Sleep((int)downTime);
+                        }
+                        else
+                        {
+                            playbackStopWatch.Start();
+                        }
 
                         i++;
-                        playbackStopWatch.Start();
                     }
                 }
 
